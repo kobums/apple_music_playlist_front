@@ -1,0 +1,27 @@
+.result-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .result-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .result-item {
+    font-size: 1.5rem;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+  }
+  
+  .result-item.success {
+    background-color: #4CAF50; /* 초록색 */
+  }
+  
+  .result-item.failure {
+    background-color: #f44336; /* 빨강색 */
+  }

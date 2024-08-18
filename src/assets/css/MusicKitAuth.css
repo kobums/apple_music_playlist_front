@@ -1,0 +1,53 @@
+.auth-container {
+    display: flex;
+    flex-direction: column; /* 세로로 정렬 */
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 화면 전체 높이 */
+    background-color: #f0f0f0; /* 배경색 */
+  }
+  
+  .welcome-message {
+    font-size: 24px; /* 글자 크기 */
+    color: #333; /* 글자 색상 */
+    text-align: center; /* 중앙 정렬 */
+    margin-bottom: 20px; /* 버튼과의 간격 */
+    line-height: 1.5;
+    font-weight: bold;
+  }
+  
+  .welcome-char {
+    display: inline-block;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards; /* 글자가 나타나는 애니메이션 */
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .auth-button {
+    background-color: #ff2d55; /* Apple Music의 주요 색상 */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .auth-button:hover {
+    background-color: #e0264d; /* 호버 시 약간 더 어두운 색상 */
+  }
+  
+  .auth-button:disabled {
+    background-color: #ccc; /* 비활성화 시 색상 */
+    cursor: not-allowed;
+  }

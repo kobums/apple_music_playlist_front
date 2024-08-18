@@ -1,0 +1,97 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px; /* 화면에서 너무 붙지 않게 약간의 패딩 추가 */
+}
+
+.playlist-form {
+  width: 100%;
+  max-width: 800px; /* 폼이 화면 크기에 따라 확장되도록 */
+  padding: 60px;
+  background-color: #fff; /* 배경색을 흰색으로 설정 */
+  border-radius: 8px; /* 모서리를 둥글게 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.playlist-input,
+.playlist-textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.playlist-textarea {
+  height: 800px;
+  resize: none;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block; /* 버튼을 인라인 블록으로 설정 */
+  margin-top: 10px;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #ff2d55;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button {
+  background-color: #ff2d55;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #e0264d;
+}
