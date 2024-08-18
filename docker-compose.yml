@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  react-app:
+    build: .
+    ports:
+      - "9002:9002"
