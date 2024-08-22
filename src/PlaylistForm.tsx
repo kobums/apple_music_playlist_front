@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import axios from 'axios';
 import ResultPage from './ResultPage';
+import Modal from './components/Modal';
 
 const PlaylistForm: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [playlistContent, setPlaylistContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [results, setResults] = useState<Array<{ song: string; status: boolean }> | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>('');
 
   const queryClient = useQueryClient();
 
@@ -17,14 +20,19 @@ const PlaylistForm: React.FC = () => {
   const developerToken = queryClient.getQueryData<string>('developerToken');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    if (title == '') {
-      return
+    e.preventDefault();
+
+    if (title === '') {
+      setModalMessage('플레이리스트 제목을 입력해주세요.');
+      setShowModal(true);
+      return;
     }
-    if (playlistContent == '') {
-      return
+    if (playlistContent === '') {
+      setModalMessage('플레이리스트 내용을 입력해주세요.');
+      setShowModal(true);
+      return;
     }
 
-    e.preventDefault();
     setIsLoading(true);
 
     const payload = {
@@ -35,7 +43,8 @@ const PlaylistForm: React.FC = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:3001/api/playlist', payload, {
+      const response = await axios.post('http://localhost:8002/api/playlist', payload, {
+        // const response = await axios.post('http://140.82.12.99:8002/api/playlist', payload, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -70,8 +79,9 @@ const PlaylistForm: React.FC = () => {
       ) : results ? (
         <ResultPage results={results} onReset={handleReset} /> // 결과 페이지 표시
       ) : (
+        <>
         <form onSubmit={handleSubmit} className="playlist-form">
-          <div className="form-group">
+          <div className="form-title-group">
             <label htmlFor="playlistTitle">Playlist Title:</label>
             <input
               id="playlistTitle"
@@ -81,17 +91,19 @@ const PlaylistForm: React.FC = () => {
               className="playlist-input"
             />
           </div>
-          <div className="form-group">
+          <div className="form-content-group">
             <label htmlFor="playlistContent">Playlist Content:</label>
             <textarea
               id="playlistContent"
               value={playlistContent}
               onChange={(e) => setPlaylistContent(e.target.value)}
               className="playlist-textarea"
+              placeholder="ex) 붉은노을 - 빅뱅 &#13;&#10;띄어쓰기와 하이픈 띄어쓰기 구조여야 합니다."
             />
           </div>
           <button type="submit" className="submit-button">Save Playlist</button>
         </form>
+        </>
       )}
     </div>
   );

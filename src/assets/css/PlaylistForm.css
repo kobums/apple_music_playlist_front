@@ -4,19 +4,27 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  padding: 20px; /* 화면에서 너무 붙지 않게 약간의 패딩 추가 */
+  padding: 20px;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
 }
 
 .playlist-form {
   width: 100%;
-  max-width: 800px; /* 폼이 화면 크기에 따라 확장되도록 */
-  padding: 60px;
-  background-color: #fff; /* 배경색을 흰색으로 설정 */
-  border-radius: 8px; /* 모서리를 둥글게 */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 추가 */
+  max-width: 800px;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* 폼 내부에서 스크롤 가능하게 설정 */
 }
 
-.form-group {
+.form-title-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.form-content-group {
+  position: relative;
   margin-bottom: 20px;
 }
 
@@ -30,14 +38,15 @@ label {
 .playlist-textarea {
   width: 100%;
   padding: 10px;
-  font-size: 1.5rem;
+  font-size: 1.2rem; /* 모바일에서 폰트 크기를 약간 줄임 */
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
 .playlist-textarea {
-  height: 800px;
-  resize: none;
+  height: 300px; /* 적절한 높이 설정 */
+  max-height: 300px; /* 최대 높이 설정 */
+  resize: vertical; /* 사용자가 수직 크기 조절 가능 */
   overflow-y: auto; /* 세로 스크롤 활성화 */
 }
 
@@ -50,7 +59,7 @@ label {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  display: inline-block; /* 버튼을 인라인 블록으로 설정 */
+  display: inline-block;
   margin-top: 10px;
 }
 
@@ -94,4 +103,26 @@ button {
 
 button:hover {
   background-color: #e0264d;
+}
+
+/* 모바일을 위한 미디어 쿼리 */
+@media (max-width: 768px) {
+  .playlist-form {
+    padding: 20px; /* 모바일에서 패딩을 줄임 */
+    box-shadow: none; /* 모바일에서 그림자 제거 */
+  }
+
+  .playlist-textarea {
+    height: 200px; /* 모바일에서 텍스트 영역 높이를 줄임 */
+  }
+
+  .submit-button {
+    width: 100%; /* 모바일에서 버튼을 전체 너비로 */
+    padding: 12px;
+  }
+
+  .playlist-input,
+  .playlist-textarea {
+    font-size: 1rem; /* 모바일에서 폰트 크기를 줄임 */
+  }
 }
