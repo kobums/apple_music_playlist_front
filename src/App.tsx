@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import MusicKitAuth from './MusicKitAuth';
 import PlaylistForm from './PlaylistForm';
+import "./assets/css/reset.css"
 
 const queryClient = new QueryClient();
 

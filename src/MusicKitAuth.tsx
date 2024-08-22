@@ -91,9 +91,9 @@ const MusicKitAuth = () => {
   return (
     <div className="auth-container">
       <div className="welcome-message">
-        {renderTextWithAnimation("환영합니다. 이규한님")}
+        {renderTextWithAnimation("Welcome")}
         <br />
-        {renderTextWithAnimation("당신의 애플 뮤직 플리를 만들어 보세요 ><", 1.5)} {/* 4초 후에 시작 */}
+        {renderTextWithAnimation("Create your Apple Music playlist", 1.5)} {/* 4초 후에 시작 */}
       </div>
       <button onClick={authorizeAppleMusic} disabled={!isMusicKitLoaded} className="auth-button">
         Authorize Apple Music
