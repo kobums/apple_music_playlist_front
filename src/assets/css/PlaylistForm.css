@@ -1,3 +1,4 @@
+/* General form container setup */
 .form-container {
   display: flex;
   flex-direction: column;
@@ -5,24 +6,29 @@
   justify-content: center;
   height: 100vh;
   padding: 20px;
-  overflow-y: auto; /* 세로 스크롤 활성화 */
+  /* overflow-y: auto; */
+  /* Ensure vertical scrolling is enabled */
+  box-sizing: border-box;
+  /* Ensure padding doesn't cause overflow */
 }
 
+/* Main form setup */
 .playlist-form {
   width: 100%;
   max-width: 800px;
+  /* Maximum width for larger screens */
   padding: 40px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow-y: auto; /* 폼 내부에서 스크롤 가능하게 설정 */
+  box-sizing: border-box;
+  /* Avoid overflow due to padding */
+  /* overflow-y: auto; */
+  /* Vertical scroll if necessary */
 }
 
-.form-title-group {
-  position: relative;
-  margin-bottom: 20px;
-}
-
+/* Title and content form elements */
+.form-title-group,
 .form-content-group {
   position: relative;
   margin-bottom: 20px;
@@ -38,18 +44,23 @@ label {
 .playlist-textarea {
   width: 100%;
   padding: 10px;
-  font-size: 1.2rem; /* 모바일에서 폰트 크기를 약간 줄임 */
+  font-size: 1.2rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
+  /* Ensure padding doesn't affect width */
 }
 
 .playlist-textarea {
-  height: 300px; /* 적절한 높이 설정 */
-  max-height: 300px; /* 최대 높이 설정 */
-  resize: vertical; /* 사용자가 수직 크기 조절 가능 */
-  overflow-y: auto; /* 세로 스크롤 활성화 */
+  height: 500px;
+  max-height: 500px;
+  resize: vertical;
+  /* Allow user to resize vertically */
+  overflow-y: auto;
+  /* Enable vertical scroll for textarea */
 }
 
+/* Submit button styling */
 .submit-button {
   padding: 10px 20px;
   font-size: 1.2rem;
@@ -59,7 +70,8 @@ label {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  display: inline-block;
+  width: 100%;
+  /* Ensure button takes full width on mobile */
   margin-top: 10px;
 }
 
@@ -67,6 +79,14 @@ label {
   background-color: #45a049;
 }
 
+/* Disabled button styling */
+.submit-button.disabled {
+  background-color: #ccc;
+  /* 회색으로 변경 */
+  cursor: not-allowed;
+}
+
+/* Loading spinner */
 .loading-spinner {
   display: flex;
   flex-direction: column;
@@ -105,24 +125,52 @@ button:hover {
   background-color: #e0264d;
 }
 
-/* 모바일을 위한 미디어 쿼리 */
+/* Mobile optimization */
 @media (max-width: 768px) {
   .playlist-form {
-    padding: 20px; /* 모바일에서 패딩을 줄임 */
-    box-shadow: none; /* 모바일에서 그림자 제거 */
-  }
-
-  .playlist-textarea {
-    height: 200px; /* 모바일에서 텍스트 영역 높이를 줄임 */
-  }
-
-  .submit-button {
-    width: 100%; /* 모바일에서 버튼을 전체 너비로 */
-    padding: 12px;
+    padding: 20px;
+    max-width: 100%;
+    /* Ensure form takes full width on smaller screens */
+    margin: 0 auto;
+    /* Center the form */
+    box-shadow: none;
+    /* Remove shadow on mobile */
   }
 
   .playlist-input,
   .playlist-textarea {
-    font-size: 1rem; /* 모바일에서 폰트 크기를 줄임 */
+    font-size: 1rem;
+    /* Reduce font size on mobile */
+  }
+
+  .playlist-textarea {
+    height: 500px;
+    /* Increase height for mobile */
+    max-height: 500px;
+    /* Set maximum height */
+  }
+
+  .submit-button {
+    width: 100%;
+    /* Ensure button takes full width */
+    padding: 12px;
+  }
+
+  label {
+    font-size: 1rem;
+    /* Reduce label font size on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .playlist-form {
+    padding: 15px;
+    /* Further reduce padding for smaller screens */
+  }
+
+  .playlist-textarea {
+    height: 400px;
+    /* Larger textarea for very small screens */
+    max-height: 600px;
   }
 }

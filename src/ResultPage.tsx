@@ -1,5 +1,6 @@
 import React from 'react';
 import './assets/css/ResultPage.css';
+import { useNavigate } from 'react-router-dom';
 
 interface ResultPageProps {
   results: Array<{ song: string; status: boolean }>;
@@ -7,9 +8,11 @@ interface ResultPageProps {
 }
 
 const ResultPage: React.FC<ResultPageProps> = ({ results, onReset }) => {
+  const navigate = useNavigate();
 
   const handleConfirm = () => {
     onReset(); // 상태 리셋
+    navigate('/login');
   };
 
   return (
