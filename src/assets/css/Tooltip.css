@@ -1,0 +1,58 @@
+.tooltip-wrapper {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.tooltip-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  /* Makes the icon round */
+  /* background-color: #ff2d55; */
+  background-color: white;
+  /* Background color of the icon */
+  color: red;
+  /* Color of the exclamation mark */
+  font-weight: bold;
+  text-align: center;
+  line-height: 20px;
+  /* Vertically center the exclamation mark */
+  font-size: 14px;
+}
+
+.tooltip-box {
+  position: absolute;
+  bottom: 125%;
+  /* Adjusts the position above the element */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #555;
+  color: #fff;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tooltip-box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  /* Aligns arrow below the tooltip */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip-wrapper:hover .tooltip-box {
+  visibility: visible;
+  opacity: 1;
+}
