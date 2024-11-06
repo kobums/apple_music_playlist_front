@@ -13,8 +13,8 @@ const MusicKitAuth = () => {
   useEffect(() => {
     const fetchDeveloperToken = async () => {
       try {
-        const response = await axios('http://localhost:8002/api/token');
-        // const response = await axios('http://140.82.12.99:8002/api/token');
+        // const response = await axios('http://localhost:8002/api/token');
+        const response = await axios('https://140.82.12.99:8002/api/token');
         if (response) {
           queryClient.setQueryData('developerToken', response.data.developerToken);
           initializeMusicKit(response.data.developerToken);

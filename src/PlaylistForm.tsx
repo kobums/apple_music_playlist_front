@@ -50,8 +50,8 @@ const PlaylistForm: React.FC = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8002/api/playlist', payload, {
-        // const response = await axios.post('http://140.82.12.99:8002/api/playlist', payload, {
+      // const response = await axios.post('http://localhost:8002/api/playlist', payload, {
+      const response = await axios.post('https://140.82.12.99:8002/api/playlist', payload, {
         headers: {
           'Content-Type': 'application/json',
         },
