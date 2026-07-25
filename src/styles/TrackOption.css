@@ -1,0 +1,111 @@
+/* Candidate row. Selected state uses the full triad: background + 2px border + text. */
+
+.track-option {
+  display: flex;
+  align-items: center;
+  column-gap: var(--space-150);
+  padding: var(--space-100);
+  border: var(--border-width-default) solid var(--color-border);
+  border-radius: var(--radius-large);
+  background-color: var(--surface-default);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-xshort) var(--easing-out-practical),
+    border-color var(--duration-xshort) var(--easing-out-practical);
+}
+
+.track-option:hover {
+  background-color: var(--surface-default-hovered);
+}
+
+.track-option--selected {
+  background-color: var(--color-background-selected);
+  border-color: var(--color-border-selected);
+  border-width: var(--border-width-selected);
+  color: var(--color-text-selected);
+  /* Compensate for the thicker selected border so rows do not shift. */
+  padding: calc(var(--space-100) - 0.0625rem);
+}
+
+.track-option:focus-within {
+  outline: var(--border-width-focused) solid var(--color-border-focused);
+  outline-offset: 2px;
+  border-radius: var(--radius-xlarge);
+}
+
+.track-option__radio {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  accent-color: var(--color-background-selected-bold);
+}
+
+.track-option__art {
+  flex: none;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: var(--radius-small);
+  object-fit: cover;
+  background-color: var(--color-background-neutral);
+}
+
+.track-option__art--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-icon-subtlest);
+}
+
+.track-option__text {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-025);
+  min-inline-size: 0;
+  flex: 1;
+}
+
+.track-option__title {
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: var(--font-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.track-option--selected .track-option__title {
+  color: var(--color-text-selected);
+}
+
+.track-option__meta {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  overflow-wrap: anywhere;
+}
+
+.track-option__preview {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--space-400);
+  block-size: var(--space-400);
+  padding: 0;
+  border: var(--border-width-default) solid var(--color-border);
+  border-radius: var(--radius-full);
+  --focus-ring-radius: var(--radius-full);
+  background-color: var(--color-background-neutral-subtle);
+  color: var(--color-icon-subtle);
+  cursor: pointer;
+  transition: background-color var(--duration-xshort) var(--easing-out-practical);
+}
+
+.track-option__preview:hover {
+  background-color: var(--color-background-neutral-subtle-hovered);
+}
+
+.track-option__preview[aria-pressed='true'] {
+  background-color: var(--color-background-selected-bold);
+  border-color: transparent;
+  color: var(--color-icon-inverse);
+}
