@@ -1,7 +1,7 @@
 /*
  * Result screen. The list used to be pinned to a fixed 700px height that
- * overflowed short viewports; it now grows with the content and only scrolls
- * once it runs out of room.
+ * overflowed short viewports; it now grows with the content and the page
+ * scrolls normally, which also keeps the candidate pickers reachable.
  */
 
 .result {
@@ -34,37 +34,100 @@
 }
 
 .result__list {
-  max-block-size: 60dvh;
-  overflow-y: auto;
-  border-block-start: var(--border-width-default) solid var(--color-border);
+  display: flex;
+  flex-direction: column;
 }
 
 .result__item {
   display: flex;
+  flex-direction: column;
+  row-gap: var(--space-100);
+  padding-block: var(--space-150);
+  border-block-end: var(--border-width-default) solid var(--color-border);
+}
+
+.result__row {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   column-gap: var(--space-200);
-  padding-block: var(--space-100);
-  padding-inline: var(--space-100);
-  border-block-end: var(--border-width-default) solid var(--color-border);
-  font-size: var(--font-size-body);
-  line-height: var(--line-height-body);
-  color: var(--color-text);
 }
 
 .result__song {
   min-inline-size: 0;
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
   overflow-wrap: anywhere;
+}
+
+.result__matched {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+}
+
+.result__review {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-150);
+  padding-block-start: var(--space-050);
+}
+
+.result__candidates {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-100);
+}
+
+.result__skip {
+  display: flex;
+  align-items: center;
+  column-gap: var(--space-100);
+  padding-inline: var(--space-100);
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  cursor: pointer;
+}
+
+.result__skip input {
+  inline-size: 1rem;
+  block-size: 1rem;
+  accent-color: var(--color-background-selected-bold);
+}
+
+.result__search {
+  display: flex;
+  column-gap: var(--space-100);
+}
+
+.result__search .field__input {
+  flex: 1;
+}
+
+.result__search .btn {
+  flex: none;
 }
 
 .result__actions {
   display: flex;
-  justify-content: flex-start;
+  column-gap: var(--space-100);
+  /* Stays reachable while working through a long list of candidates. */
+  position: sticky;
+  inset-block-end: 0;
+  padding-block: var(--space-200);
+  background-color: var(--surface-default);
+  border-block-start: var(--border-width-default) solid var(--color-border);
 }
 
 @media (max-width: 48rem) {
   .result {
     padding: var(--space-300) var(--space-200);
+  }
+
+  .result__actions {
+    flex-direction: column;
   }
 
   .result__actions .btn {

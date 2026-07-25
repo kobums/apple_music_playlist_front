@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { FiInfo } from 'react-icons/fi';
 import { useAuth } from '../auth/AuthContext';
-import { savePlaylist, SessionExpiredError, type TrackResult } from '../lib/api';
+import { savePlaylist, SessionExpiredError, type SavePlaylistResult } from '../lib/api';
 import { unauthorizeMusicKit } from '../lib/musickit';
 import Celebration from '../components/Celebration';
 import ResultPage from './ResultPage';
@@ -25,7 +25,7 @@ export default function PlaylistForm() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [results, setResults] = useState<TrackResult[] | null>(null);
+  const [saved, setSaved] = useState<SavePlaylistResult | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -78,10 +78,14 @@ export default function PlaylistForm() {
         userToken: musicUserToken ?? '',
         developerToken: developerToken ?? '',
       });
-      setResults(result);
+      setSaved(result);
       // The celebration used to fire from `finally`, so a failed save still
-      // congratulated the user. It is now tied to a successful response only.
-      setShowCelebration(true);
+      // congratulated the user. It is now tied to a successful response only,
+      // and only when something actually went in — a screen full of "needs
+      // checking" is not a completed job.
+      if (result.results.some((row) => row.status === 'added')) {
+        setShowCelebration(true);
+      }
     } catch (cause) {
       if (cause instanceof SessionExpiredError) {
         // Retrying is pointless — the stored token is dead. Drop it everywhere
@@ -105,7 +109,7 @@ export default function PlaylistForm() {
   const handleReset = () => {
     setTitle('');
     setContent('');
-    setResults(null);
+    setSaved(null);
     setFieldErrors({});
     setSubmitError(null);
   };
@@ -121,10 +125,18 @@ export default function PlaylistForm() {
     );
   }
 
-  if (results) {
+  if (saved) {
     return (
       <>
-        <ResultPage results={results} onReset={handleReset} />
+        <ResultPage
+          playlistId={saved.playlistId}
+          results={saved.results}
+          userToken={musicUserToken ?? ''}
+          onReset={handleReset}
+          onSessionExpired={(message) => {
+            void unauthorizeMusicKit().then(() => clear(message));
+          }}
+        />
         <Celebration message="플레이리스트를 저장했습니다" show={showCelebration} />
       </>
     );
