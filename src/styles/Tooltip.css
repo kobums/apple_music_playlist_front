@@ -1,0 +1,66 @@
+/* components.tooltip in design.md — inverted label on the overlay plane. */
+
+.tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 24px hit target around a 16px glyph, per Accessibility in design.md. */
+  inline-size: var(--space-300);
+  block-size: var(--space-300);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  --focus-ring-radius: var(--radius-full);
+  background-color: var(--color-background-neutral-subtle);
+  color: var(--color-icon-subtle);
+  cursor: pointer;
+  transition: background-color var(--duration-xshort) var(--easing-out-practical);
+}
+
+.tooltip__trigger:hover {
+  background-color: var(--color-background-neutral-subtle-hovered);
+}
+
+.tooltip__box {
+  position: absolute;
+  inset-block-end: calc(100% + var(--space-100));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  max-inline-size: 240px;
+  inline-size: max-content;
+  padding-block: var(--space-050);
+  padding-inline: var(--space-075);
+  border-radius: var(--radius-small);
+  background-color: var(--color-background-neutral-bold);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  text-align: start;
+  animation: tooltip-in var(--duration-short) var(--easing-out-practical);
+}
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Keep the tooltip on screen on narrow viewports rather than clipping it. */
+@media (max-width: 30rem) {
+  .tooltip__box {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    transform: none;
+    max-inline-size: min(240px, 70vw);
+  }
+}

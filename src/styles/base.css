@@ -1,0 +1,397 @@
+/*
+ * Reset, page canvas, and the shared component recipes from `design.md`.
+ * Screen-specific layout lives in the per-screen files under `src/styles/`.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  block-size: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+/* Page canvas is `surface` — never `surface-sunken`. */
+body {
+  background-color: var(--surface-default);
+  color: var(--color-text);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+}
+
+/* ------------------------------------------------------------- focus ring */
+/*
+ * design.md → Shapes → Focus ring: 2px `border-focused`, offset 2px, and the
+ * ring radius is the component radius + 2px. Each component sets
+ * `--focus-ring-radius` to its own radius + 0.125rem.
+ */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: var(--border-width-focused) solid var(--color-border-focused);
+  outline-offset: 2px;
+  border-radius: var(--focus-ring-radius, var(--radius-large));
+}
+
+/* --------------------------------------------------------------- headings */
+h1 {
+  font-size: var(--font-size-heading-large);
+  line-height: var(--line-height-heading-large);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-heading);
+}
+
+h2 {
+  font-size: var(--font-size-heading-medium);
+  line-height: var(--line-height-heading-medium);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-heading);
+}
+
+/* ----------------------------------------------------------------- button */
+/* components.button-default in design.md */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: var(--space-075);
+  min-block-size: var(--space-400);
+  padding-block: var(--space-075);
+  padding-inline: var(--space-150);
+  border: var(--border-width-default) solid var(--color-border);
+  border-radius: var(--radius-medium);
+  --focus-ring-radius: var(--radius-large);
+  background-color: var(--color-background-neutral-subtle);
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--duration-xshort) var(--easing-out-practical);
+}
+
+.btn:hover:not(:disabled) {
+  background-color: var(--color-background-neutral-subtle-hovered);
+}
+
+.btn:active:not(:disabled) {
+  background-color: var(--color-background-neutral-subtle-pressed);
+}
+
+.btn:disabled {
+  background-color: transparent;
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* components.button-primary */
+.btn--primary {
+  background-color: var(--color-background-brand-bold);
+  border-color: transparent;
+  color: var(--color-text-inverse);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--color-background-brand-bold-hovered);
+}
+
+.btn--primary:active:not(:disabled) {
+  background-color: var(--color-background-brand-bold-pressed);
+}
+
+/* components.spinner-inverse — on a bold fill the spinner inherits inverse ink */
+.btn--primary:not(:disabled) .spinner {
+  color: var(--color-icon-inverse);
+}
+
+/* components.button-subtle */
+.btn--subtle {
+  background-color: var(--color-background-neutral-subtle);
+  border-color: transparent;
+  color: var(--color-text-subtle);
+}
+
+.btn--subtle:hover:not(:disabled) {
+  background-color: var(--color-background-neutral-subtle-hovered);
+}
+
+.btn--fit-container {
+  inline-size: 100%;
+}
+
+/* -------------------------------------------------------------- textfield */
+/* components.form-label */
+.field {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-100);
+}
+
+.field__label-row {
+  display: flex;
+  align-items: center;
+  column-gap: var(--space-050);
+}
+
+.field__label {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  font-weight: var(--font-weight-medium);
+}
+
+/* components.textfield-standard */
+.field__input,
+.field__textarea {
+  inline-size: 100%;
+  padding: var(--space-075);
+  border: var(--border-width-default) solid var(--color-border-input);
+  border-radius: var(--radius-medium);
+  --focus-ring-radius: var(--radius-large);
+  background-color: var(--color-background-input);
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  transition:
+    background-color var(--duration-xshort) var(--easing-out-practical),
+    border-color var(--duration-xshort) var(--easing-out-practical);
+}
+
+.field__input::placeholder,
+.field__textarea::placeholder {
+  color: var(--color-text-subtlest);
+}
+
+.field__input:hover:not(:disabled),
+.field__textarea:hover:not(:disabled) {
+  background-color: var(--color-background-input-hovered);
+}
+
+.field__input:disabled,
+.field__textarea:disabled {
+  background-color: var(--color-background-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* components.textfield-standard-invalid */
+.field__input[aria-invalid='true'],
+.field__textarea[aria-invalid='true'] {
+  border-color: var(--color-border-danger);
+}
+
+.field__textarea {
+  min-block-size: 12rem;
+  block-size: clamp(12rem, 45vh, 30rem);
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* components.form-helper-message / form-error-message */
+.field__helper {
+  color: var(--color-text-subtlest);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+}
+
+.field__error {
+  color: var(--color-text-danger);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+}
+
+/* --------------------------------------------------------- section message */
+/* components.section-message — semantic background + role icon, neutral prose */
+.section-message {
+  display: flex;
+  column-gap: var(--space-200);
+  padding: var(--space-200);
+  border-radius: var(--radius-large);
+  color: var(--color-text);
+}
+
+.section-message__icon {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-block-start: var(--space-025);
+}
+
+.section-message__title {
+  font-size: var(--font-size-heading-small);
+  line-height: var(--line-height-heading-small);
+  font-weight: var(--font-weight-bold);
+  margin-block-end: var(--space-050);
+}
+
+.section-message__body {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+.section-message--error {
+  background-color: var(--color-background-danger);
+}
+
+.section-message--error .section-message__icon {
+  color: var(--color-icon-danger);
+}
+
+.section-message--information {
+  background-color: var(--color-background-information);
+}
+
+.section-message--information .section-message__icon {
+  color: var(--color-icon-information);
+}
+
+.section-message--success {
+  background-color: var(--color-background-success);
+}
+
+.section-message--success .section-message__icon {
+  color: var(--color-icon-success);
+}
+
+/* ---------------------------------------------------------------- lozenge */
+/* components.lozenge — semantic status, always with a visible 1px border */
+.lozenge {
+  display: inline-flex;
+  align-items: center;
+  column-gap: var(--space-050);
+  min-block-size: 1.25rem;
+  padding-block: var(--space-025);
+  padding-inline: var(--space-050);
+  border: var(--border-width-default) solid var(--color-border-bold);
+  border-radius: var(--radius-small);
+  background-color: var(--color-background-neutral);
+  color: var(--color-text);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  font-weight: var(--font-weight-regular);
+  white-space: nowrap;
+}
+
+.lozenge__icon {
+  flex: none;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  color: var(--color-icon-subtlest);
+}
+
+.lozenge--success {
+  background-color: var(--color-background-success-subtler);
+  border-color: var(--color-border-success);
+  color: var(--color-text-success-bolder);
+}
+
+.lozenge--success .lozenge__icon {
+  color: var(--color-icon-success);
+}
+
+.lozenge--danger {
+  background-color: var(--color-background-danger-subtler);
+  border-color: var(--color-border-danger);
+  color: var(--color-text-danger-bolder);
+}
+
+.lozenge--danger .lozenge__icon {
+  color: var(--color-icon-danger);
+}
+
+/* ---------------------------------------------------------------- spinner */
+/* components.spinner — stroke-based, tokenised rotate motion */
+.spinner {
+  display: block;
+  color: var(--color-icon-subtle);
+  animation: spinner-rotate var(--spinner-rotate-duration) var(--spinner-rotate-timing-function)
+    infinite;
+  transform-origin: center;
+}
+
+.spinner circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--spinner-stroke-width);
+  stroke-linecap: round;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 40;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------- visually hidden */
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* The spinner is the one place where motion carries meaning; keep it slow
+     rather than removing it, so "in progress" is still legible. */
+  .spinner {
+    animation-duration: 2s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

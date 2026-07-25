@@ -1,0 +1,227 @@
+/*
+ * Atlassian design tokens — generated from the YAML frontmatter of `design.md`.
+ *
+ * Every value here is a verbatim copy of a token in that manifest. Component CSS
+ * MUST reference these variables and MUST NOT hand-author hex, px spacing, or px
+ * radii. Chart, code and rovo ramps are omitted because this app renders no charts
+ * or code blocks; add them from design.md if that changes.
+ */
+
+:root {
+  /* ---------------------------------------------------------------- colors */
+
+  /* text */
+  --color-text: #292a2e;
+  --color-text-subtle: #505258;
+  --color-text-subtlest: #6b6e76;
+  --color-text-disabled: #080f214a;
+  --color-text-inverse: #ffffff;
+  --color-text-selected: #1868db;
+  --color-text-brand: #1868db;
+  --color-text-danger: #ae2e24;
+  --color-text-danger-bolder: #5d1f1a;
+  --color-text-warning: #9e4c00;
+  --color-text-warning-inverse: #292a2e;
+  --color-text-success: #4c6b1f;
+  --color-text-success-bolder: #37471f;
+  --color-text-information: #1558bc;
+  --color-text-information-bolder: #123263;
+  --color-text-discovery: #803fa5;
+
+  /* link */
+  --color-link: #1868db;
+  --color-link-pressed: #1558bc;
+  --color-link-visited: #803fa5;
+
+  /* icon */
+  --color-icon: #292a2e;
+  --color-icon-subtle: #505258;
+  --color-icon-subtlest: #6b6e76;
+  --color-icon-disabled: #080f214a;
+  --color-icon-inverse: #ffffff;
+  --color-icon-brand: #1868db;
+  --color-icon-danger: #c9372c;
+  --color-icon-warning: #e06c00;
+  --color-icon-success: #6a9a23;
+  --color-icon-information: #357de8;
+  --color-icon-discovery: #af59e1;
+
+  /* border */
+  --color-border: #0b120e24;
+  --color-border-bold: #7d818a;
+  --color-border-input: #8c8f97;
+  --color-border-focused: #4688ec;
+  --color-border-disabled: #0515240f;
+  --color-border-selected: #1868db;
+  --color-border-brand: #1868db;
+  --color-border-danger: #e2483d;
+  --color-border-danger-subtle: #fd9891;
+  --color-border-warning: #e06c00;
+  --color-border-success: #6a9a23;
+  --color-border-success-subtle: #b3df72;
+  --color-border-information: #357de8;
+  --color-border-information-subtle: #8fb8f6;
+
+  /* neutral backgrounds */
+  --color-background-neutral: #0515240f;
+  --color-background-neutral-hovered: #0b120e24;
+  --color-background-neutral-pressed: #080f214a;
+  --color-background-neutral-subtle: #00000000;
+  --color-background-neutral-subtle-hovered: #0515240f;
+  --color-background-neutral-subtle-pressed: #0b120e24;
+  --color-background-neutral-bold: #292a2e;
+  --color-background-neutral-bold-hovered: #3b3d42;
+  --color-background-neutral-bold-pressed: #505258;
+  --color-background-disabled: #0515240f;
+  --color-background-input: #ffffff;
+  --color-background-input-hovered: #f8f8f8;
+  --color-background-input-pressed: #ffffff;
+
+  /* brand / selected */
+  --color-background-selected: #e9f2fe;
+  --color-background-selected-hovered: #cfe1fd;
+  --color-background-selected-bold: #1868db;
+  --color-background-selected-bold-hovered: #1558bc;
+  --color-background-brand-subtlest: #e9f2fe;
+  --color-background-brand-bold: #1868db;
+  --color-background-brand-bold-hovered: #1558bc;
+  --color-background-brand-bold-pressed: #144794;
+
+  /* danger */
+  --color-background-danger: #ffeceb;
+  --color-background-danger-hovered: #ffd5d2;
+  --color-background-danger-subtler: #ffd5d2;
+  --color-background-danger-bold: #c9372c;
+  --color-background-danger-bold-hovered: #ae2e24;
+  --color-background-danger-bold-pressed: #872821;
+
+  /* warning */
+  --color-background-warning: #fff5db;
+  --color-background-warning-subtler: #fce4a6;
+  --color-background-warning-bold: #fbc828;
+
+  /* success */
+  --color-background-success: #efffd6;
+  --color-background-success-subtler: #d3f1a7;
+  --color-background-success-bold: #5b7f24;
+  --color-background-success-bold-hovered: #4c6b1f;
+  --color-background-success-bold-pressed: #3f5224;
+
+  /* information */
+  --color-background-information: #e9f2fe;
+  --color-background-information-subtler: #cfe1fd;
+  --color-background-information-bold: #1868db;
+
+  /* discovery */
+  --color-background-discovery: #f8eefe;
+  --color-background-discovery-bold: #964ac0;
+
+  /* interaction / overlay */
+  --color-interaction-hovered: #00000029;
+  --color-interaction-pressed: #00000052;
+  --color-blanket: #050c1f75;
+  --color-skeleton: #0515240f;
+
+  /* ------------------------------------------------------------- surfaces */
+  --surface-default: #ffffff;
+  --surface-default-hovered: #f0f1f2;
+  --surface-default-pressed: #dddee1;
+  --surface-sunken: #f8f8f8;
+  --surface-raised: #ffffff;
+  --surface-overlay: #ffffff;
+
+  --shadow-raised: 0 1px 1px #1e1f2140, 0 0 1px #1e1f214f;
+  --shadow-overlay: 0 8px 12px #1e1f2126, 0 0 1px #1e1f214f;
+  --shadow-overflow: 0 0 8px #1e1f2129, 0 0 1px #1e1f211f;
+
+  /* ----------------------------------------------------------- typography */
+  /*
+   * Atlassian Sans / Atlassian Mono are not distributed publicly, so this is the
+   * sanctioned system fallback stack. No third-party webfont is loaded.
+   */
+  --font-family-body:
+    'Atlassian Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo',
+    'Pretendard', 'Noto Sans KR', Roboto, sans-serif;
+  --font-family-heading: var(--font-family-body);
+  --font-family-code:
+    'Atlassian Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 653;
+
+  --font-size-heading-xxlarge: 2rem;
+  --line-height-heading-xxlarge: 2.25rem;
+  --font-size-heading-xlarge: 1.75rem;
+  --line-height-heading-xlarge: 2rem;
+  --font-size-heading-large: 1.5rem;
+  --line-height-heading-large: 1.75rem;
+  --font-size-heading-medium: 1.25rem;
+  --line-height-heading-medium: 1.5rem;
+  --font-size-heading-small: 1rem;
+  --line-height-heading-small: 1.25rem;
+  --font-size-heading-xsmall: 0.875rem;
+  --line-height-heading-xsmall: 1.25rem;
+
+  --font-size-body-large: 1rem;
+  --line-height-body-large: 1.5rem;
+  --font-size-body: 0.875rem;
+  --line-height-body: 1.25rem;
+  --font-size-body-small: 0.75rem;
+  --line-height-body-small: 1rem;
+
+  --font-size-metric-large: 1.75rem;
+  --line-height-metric-large: 2rem;
+  --font-size-metric-medium: 1.5rem;
+  --line-height-metric-medium: 1.75rem;
+
+  /* -------------------------------------------------------------- spacing */
+  --space-0: 0rem;
+  --space-025: 0.125rem;
+  --space-050: 0.25rem;
+  --space-075: 0.375rem;
+  --space-100: 0.5rem;
+  --space-150: 0.75rem;
+  --space-200: 1rem;
+  --space-250: 1.25rem;
+  --space-300: 1.5rem;
+  --space-400: 2rem;
+  --space-500: 2.5rem;
+  --space-600: 3rem;
+  --space-800: 4rem;
+  --space-1000: 5rem;
+
+  /* --------------------------------------------------------------- shapes */
+  --radius-xsmall: 0.125rem;
+  --radius-small: 0.25rem;
+  --radius-medium: 0.375rem;
+  --radius-large: 0.5rem;
+  --radius-xlarge: 0.75rem;
+  --radius-xxlarge: 1rem;
+  --radius-full: 624.9375rem;
+
+  --border-width-default: 0.0625rem;
+  --border-width-selected: 0.125rem;
+  --border-width-focused: 0.125rem;
+
+  /* --------------------------------------------------------------- motion */
+  --duration-instant: 0ms;
+  --duration-xxshort: 50ms;
+  --duration-xshort: 100ms;
+  --duration-short: 150ms;
+  --duration-medium: 200ms;
+  --duration-long: 250ms;
+  --duration-xlong: 400ms;
+  --duration-xxlong: 600ms;
+
+  --easing-in-practical: cubic-bezier(0.6, 0, 0.8, 0.6);
+  --easing-inout-bold: cubic-bezier(0.4, 0, 0, 1);
+  --easing-out-practical: cubic-bezier(0.4, 1, 0.6, 1);
+  --easing-out-bold: cubic-bezier(0, 0.4, 0, 1);
+
+  /* Spinner recipe (components.spinner in design.md) */
+  --spinner-stroke-width: 1.5px;
+  --spinner-rotate-duration: 0.86s;
+  --spinner-rotate-timing-function: cubic-bezier(0.4, 0.15, 0.6, 0.85);
+}

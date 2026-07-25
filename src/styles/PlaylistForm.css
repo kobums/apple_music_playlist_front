@@ -1,0 +1,65 @@
+/* Playlist form. Bordered card on the default plane — no drop shadow. */
+
+.playlist {
+  display: flex;
+  justify-content: center;
+  min-block-size: 100dvh;
+  padding: var(--space-400) var(--space-300);
+}
+
+.playlist--centered {
+  align-items: center;
+}
+
+.playlist__card {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-300);
+  inline-size: 100%;
+  max-inline-size: 50rem;
+  padding: var(--space-400);
+  border: var(--border-width-default) solid var(--color-border);
+  border-radius: var(--radius-large);
+  background-color: var(--surface-default);
+  block-size: fit-content;
+}
+
+.playlist__heading {
+  font-size: var(--font-size-heading-large);
+  line-height: var(--line-height-heading-large);
+  font-weight: var(--font-weight-bold);
+}
+
+.playlist__form {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-300);
+}
+
+.playlist__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: var(--space-200);
+  color: var(--color-text);
+  text-align: center;
+  text-wrap: balance;
+}
+
+@media (max-width: 48rem) {
+  .playlist {
+    padding: var(--space-200);
+  }
+
+  .playlist__card {
+    padding: var(--space-300);
+    border: none;
+  }
+}
+
+@media (max-width: 30rem) {
+  .playlist__card {
+    padding: var(--space-200);
+    row-gap: var(--space-200);
+  }
+}

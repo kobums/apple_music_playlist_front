@@ -1,0 +1,80 @@
+/* Sign-in screen. Canvas stays `surface` — never sunken. */
+
+.auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 100dvh;
+  padding: var(--space-400) var(--space-300);
+}
+
+.auth__content {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-400);
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  text-align: center;
+}
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-100);
+  font-size: var(--font-size-heading-xlarge);
+  line-height: var(--line-height-heading-xlarge);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.welcome__line--secondary {
+  font-size: var(--font-size-heading-medium);
+  line-height: var(--line-height-heading-medium);
+  color: var(--color-text-subtle);
+}
+
+/*
+ * A first-run brand moment, so per design.md → Motion it may be a little
+ * richer than everyday UI motion — but it stays short so the CTA is not
+ * gated behind a long animation.
+ */
+.welcome__char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  animation: welcome-fade-in var(--duration-long) var(--easing-out-bold) forwards;
+  animation-delay: calc(var(--char-start, 0ms) + var(--char-index, 0) * 30ms);
+}
+
+@keyframes welcome-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-050));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.auth__actions .btn {
+  min-inline-size: 14rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * The global reduced-motion rule collapses the duration but not the stagger
+   * delay, which would still hold the heading blank for seconds.
+   */
+  .welcome__char {
+    animation-delay: 0ms !important;
+    opacity: 1;
+  }
+}

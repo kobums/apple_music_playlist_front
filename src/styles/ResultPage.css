@@ -1,0 +1,73 @@
+/*
+ * Result screen. The list used to be pinned to a fixed 700px height that
+ * overflowed short viewports; it now grows with the content and only scrolls
+ * once it runs out of room.
+ */
+
+.result {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-300);
+  inline-size: 100%;
+  max-inline-size: 50rem;
+  min-block-size: 100dvh;
+  margin-inline: auto;
+  padding: var(--space-400) var(--space-300);
+}
+
+.result__header {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--space-050);
+}
+
+.result__heading {
+  font-size: var(--font-size-heading-large);
+  line-height: var(--line-height-heading-large);
+  font-weight: var(--font-weight-bold);
+}
+
+.result__summary {
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+.result__list {
+  max-block-size: 60dvh;
+  overflow-y: auto;
+  border-block-start: var(--border-width-default) solid var(--color-border);
+}
+
+.result__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-200);
+  padding-block: var(--space-100);
+  padding-inline: var(--space-100);
+  border-block-end: var(--border-width-default) solid var(--color-border);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+}
+
+.result__song {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.result__actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (max-width: 48rem) {
+  .result {
+    padding: var(--space-300) var(--space-200);
+  }
+
+  .result__actions .btn {
+    inline-size: 100%;
+  }
+}
