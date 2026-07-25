@@ -26,12 +26,12 @@ export interface Track {
 }
 
 /**
- * `added` went in, `duplicate` was already in the playlist, `review` was found
- * but needs a person to confirm, `missing` had no usable candidate. The API used
- * to return a bare boolean, which forced an unverified guess to be reported as a
- * success and had no way to say "already there".
+ * `added` went in, `duplicate` was already in the playlist, `ready` is a
+ * confident match held back until the whole batch can be saved in order,
+ * `review` was found but needs a person to confirm, `missing` had no usable
+ * candidate.
  */
-export type MatchStatus = 'added' | 'duplicate' | 'review' | 'missing';
+export type MatchStatus = 'added' | 'duplicate' | 'ready' | 'review' | 'missing';
 
 export interface TrackResult {
   song: string;
@@ -49,6 +49,13 @@ export interface SavePlaylistResult {
   existingCount: number;
   /** True when the playlist did not exist and was created. */
   created: boolean;
+  /**
+   * True when nothing has been written yet. Apple can only append, so when any
+   * row still needs a decision the whole batch waits and is saved in one
+   * ordered request — otherwise confirmed picks land at the end of the playlist
+   * instead of in the pasted order.
+   */
+  deferred: boolean;
   results: TrackResult[];
 }
 
@@ -64,6 +71,7 @@ interface PlaylistResponse {
   playlistName?: string;
   playlistExistingCount?: number;
   playlistCreated?: boolean;
+  deferred?: boolean;
   result?: TrackResult[];
   error?: string;
 }
@@ -152,6 +160,7 @@ export async function savePlaylist(input: SavePlaylistInput): Promise<SavePlayli
       playlistName: data.playlistName ?? input.title,
       existingCount: data.playlistExistingCount ?? 0,
       created: data.playlistCreated ?? false,
+      deferred: data.deferred ?? false,
       results: data.result,
     };
   } catch (error) {

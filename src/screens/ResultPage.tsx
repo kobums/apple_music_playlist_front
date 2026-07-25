@@ -23,6 +23,7 @@ interface ResultPageProps {
 const STATUS_LABEL = {
   added: '추가됨',
   duplicate: '이미 있음',
+  ready: '추가 예정',
   review: '확인 필요',
   missing: '못 찾음',
 } as const;
@@ -30,12 +31,16 @@ const STATUS_LABEL = {
 const STATUS_APPEARANCE = {
   added: 'success',
   duplicate: 'default',
+  ready: 'default',
   review: 'default',
   missing: 'danger',
 } as const;
 
-/** Rows in these states are settled — nothing for the user to decide. */
+/** Rows already written to the playlist — nothing left to do. */
 const SETTLED: MatchStatus[] = ['added', 'duplicate'];
+
+/** Rows where the user still has to pick something. */
+const UNDECIDED: MatchStatus[] = ['review', 'missing'];
 
 export default function ResultPage({
   playlistId,
@@ -50,10 +55,15 @@ export default function ResultPage({
   const [rows, setRows] = useState<TrackResult[]>(results);
   // Row index → chosen track id. Seeded with the best guess so confirming a
   // whole screen of suggestions is one click, not one click per row.
+  // `ready` rows are confident matches waiting on the batch, so they are
+  // pre-selected too — the user should not have to tick songs the app already
+  // matched.
   const [selected, setSelected] = useState<Record<number, string>>(() =>
     Object.fromEntries(
       results.flatMap((row, index) =>
-        row.status === 'review' && row.track ? [[index, row.track.id]] : [],
+        (row.status === 'review' || row.status === 'ready') && row.track
+          ? [[index, row.track.id]]
+          : [],
       ),
     ),
   );
@@ -93,6 +103,7 @@ export default function ResultPage({
     () => ({
       added: rows.filter((row) => row.status === 'added').length,
       duplicate: rows.filter((row) => row.status === 'duplicate').length,
+      ready: rows.filter((row) => row.status === 'ready').length,
       review: rows.filter((row) => row.status === 'review').length,
       missing: rows.filter((row) => row.status === 'missing').length,
     }),
@@ -206,17 +217,20 @@ export default function ResultPage({
           {created ? '을(를) 새로 만들었습니다.' : `에 추가했습니다 · 기존 ${existingCount}곡`}
         </p>
         <p className="result__summary">
-          {rows.length}곡 중 {counts.added}곡을 추가했습니다.
+          {counts.ready > 0
+            ? `${rows.length}곡 중 ${counts.ready}곡을 찾았습니다.`
+            : `${rows.length}곡 중 ${counts.added}곡을 추가했습니다.`}
           {counts.duplicate > 0 ? ` ${counts.duplicate}곡은 이미 들어 있어 건너뛰었습니다.` : ''}
           {counts.review > 0 ? ` ${counts.review}곡은 확인이 필요합니다.` : ''}
           {counts.missing > 0 ? ` ${counts.missing}곡은 찾지 못했습니다.` : ''}
         </p>
       </div>
 
-      {counts.review > 0 ? (
-        <SectionMessage appearance="information" title="확인이 필요한 곡이 있습니다">
-          같은 제목의 다른 아티스트나 라이브 버전일 수 있어 바로 넣지 않았습니다. 맞는 곡을 고른 뒤
-          아래 버튼으로 추가해 주세요.
+      {counts.ready > 0 || counts.review > 0 ? (
+        <SectionMessage appearance="information" title="아직 저장되지 않았습니다">
+          Apple Music은 곡을 뒤에만 붙일 수 있어서, 지금 나눠 넣으면 나중에 고른 곡이 맨 뒤로
+          갑니다. 적어 주신 순서를 지키려고 전부 모아 두었습니다. 확인이 필요한 곡을 고른 뒤 아래
+          버튼을 누르면 순서대로 한 번에 저장됩니다.
         </SectionMessage>
       ) : null}
 
@@ -235,7 +249,9 @@ export default function ResultPage({
         <ul className="result__list">
           {rows.map((row, index) => {
             const candidates = candidatesFor(row);
-            const needsAttention = !SETTLED.includes(row.status);
+            // Only undecided rows get the candidate picker; a `ready` row is
+            // already matched and just waiting for the batch.
+            const needsAttention = UNDECIDED.includes(row.status);
 
             return (
               <li key={`${index}-${row.song}`} className="result__item">
@@ -246,7 +262,7 @@ export default function ResultPage({
                   </Lozenge>
                 </div>
 
-                {SETTLED.includes(row.status) && row.track ? (
+                {!needsAttention && row.track ? (
                   <p className="result__matched">
                     {row.track.artistName} - {row.track.name}
                   </p>
@@ -326,7 +342,9 @@ export default function ResultPage({
             disabled={isAdding}
           >
             {isAdding ? <Spinner size={16} /> : null}
-            선택한 {pending.length}곡 추가
+            {counts.ready > 0 || counts.review > 0
+            ? `${pending.length}곡 순서대로 저장`
+            : `선택한 ${pending.length}곡 추가`}
           </button>
         ) : null}
         <button type="button" className={pending.length > 0 ? 'btn' : 'btn btn--primary'} onClick={onReset}>
