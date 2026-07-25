@@ -1,47 +1,43 @@
-# Getting Started with Create React App
+# Apple Music playlist — 프론트엔드
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+곡 목록을 붙여넣으면 Apple Music 라이브러리에 플레이리스트를 만들어 주는 웹 앱입니다.
 
-## Available Scripts
+- React 19 + TypeScript, 번들러는 Vite
+- 라우팅은 `react-router` v8
+- 디자인은 [`design.md`](./design.md)의 Atlassian 토큰 매니페스트를 따릅니다
 
-In the project directory, you can run:
+## 개발
 
-### `yarn start`
+```bash
+npm install
+cp .env.example .env      # API 주소를 바꾸려면
+npm run dev               # http://localhost:9002
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+`VITE_API_BASE_URL`을 설정하지 않으면 `https://playlistapi.gowoobro.com`을 씁니다.
+로컬 백엔드를 함께 띄운다면 `.env`에 `VITE_API_BASE_URL=http://localhost:8002`을 넣으세요.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 스크립트
 
-### `yarn test`
+| 명령 | 설명 |
+| --- | --- |
+| `npm run dev` | 개발 서버 (9002 포트) |
+| `npm run build` | 타입 체크 후 `build/`에 프로덕션 번들 생성 |
+| `npm run preview` | 빌드 결과를 로컬에서 서빙 |
+| `npm run typecheck` | `tsc --noEmit` |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 배포
 
-### `yarn build`
+`dockerfile`은 멀티스테이지 빌드입니다. 1단계에서 번들을 만들고, 2단계 nginx 이미지가
+정적 파일을 서빙합니다. `nginx.conf`에 SPA fallback이 들어 있어 `/playlist`에서 새로고침해도
+404가 나지 않습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+make docker   # 이미지 빌드
+make push     # 레지스트리 푸시
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 디자인 규칙
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-# apple_music_playlist_front
+`design.md`의 YAML 토큰이 `src/styles/tokens.css`에 CSS 변수로 그대로 옮겨져 있습니다.
+컴포넌트 CSS는 이 변수만 참조하고, hex·px 간격·px radius를 직접 쓰지 않습니다.
