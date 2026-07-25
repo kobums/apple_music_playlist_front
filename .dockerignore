@@ -1,0 +1,22 @@
+# node_modules 를 반드시 제외해야 한다.
+# Dockerfile 은 `npm ci` 로 linux/amd64 의존성을 설치한 뒤 `COPY . .` 를 하는데,
+# 호스트의 node_modules 가 함께 복사되면 그 결과를 덮어쓴다.
+# lightningcss-darwin-arm64 / @rolldown/binding-darwin-arm64 같은 macOS 전용
+# 네이티브 바이너리가 리눅스 이미지 안으로 들어가 빌드가 깨진다.
+node_modules
+
+# 빌드 산출물은 이미지 안에서 새로 만든다.
+build
+dist
+.vite
+*.tsbuildinfo
+
+# 실제 환경변수는 이미지에 굽지 않는다. 런타임에 주입한다.
+.env
+.env.*
+!.env.example
+
+.git
+.gitignore
+*.log
+.DS_Store
