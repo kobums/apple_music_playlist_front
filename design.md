@@ -1747,8 +1747,39 @@ This section is project-specific and is not part of the portable manifest above.
 - `src/styles/base.css` holds the reset, page canvas (`surface`), body typography, and the shared
   focus-ring contract (`--border-width-focused`, `--color-border-focused`, offset 2px, radius +2px).
 - Semantic vs decorative colour: playlist track results use **Lozenge** semantics
-  (`success` / `danger`) with a visible 1px border — never the `accent-green` / `accent-red` ramps.
+  (`success` / `danger` / `default`) with a visible 1px border — never the `accent-green` /
+  `accent-red` ramps.
 - Page-level failures (token fetch failed, save failed) render as **SectionMessage** `error`;
   per-field validation renders as `form-error-message` beside the field.
 - All user-visible copy is sentence case with imperative CTAs, per
   [Voice and tone](#voice-and-tone).
+
+### Component map
+
+| Surface | Manifest recipe | File |
+| --- | --- | --- |
+| Track status (`added` / `duplicate` / `ready` / `review` / `missing`) | `lozenge`, `lozenge-success` | `components/Lozenge.tsx` |
+| Page-level notices | `section-message` | `components/SectionMessage.tsx` |
+| Loading | `spinner`, `spinner-inverse` | `components/Spinner.tsx` |
+| Field help | `tooltip` | `components/Tooltip.tsx` |
+| Candidate picker row | Card + full selected triad | `components/TrackOption.tsx` |
+| Buttons, fields, form messages | `button-*`, `textfield-standard`, `form-*` | `styles/base.css` |
+
+### Rules this project has had to correct
+
+These are drift patterns that were caught in review here, kept as a checklist:
+
+- **Status never rides on colour alone.** Every lozenge carries an icon and a text label, so
+  "added" and "already there" stay distinguishable in greyscale and for colourblind readers.
+- **No emoji as icons.** The completion moment uses the success glyph in a neutral tile, not 🎉.
+- **Validation is not a modal.** Empty-field errors sit beside the field (`form-error-message`);
+  SectionMessage `error` is reserved for request-level failures.
+- **Tooltips are keyboard reachable.** The trigger is a real button with `aria-describedby`, not a
+  CSS `:hover` reveal — the latter is invisible to keyboard and touch users.
+- **The tooltip trigger sits beside its label, not inside it.** A button nested in a `<label>`
+  swallows the click and focuses the input instead.
+- **Reduced motion is honoured per effect, not globally.** The staggered welcome text zeroes its
+  delay (not just its duration, which would still leave the heading blank for seconds), and the
+  full-screen completion overlay is suppressed entirely.
+- **Selected state uses the full triad** — background, 2px `border-selected`, and `text-selected`
+  — with padding compensated so rows do not shift when selection changes.
