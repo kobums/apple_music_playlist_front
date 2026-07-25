@@ -82,8 +82,15 @@ interface SearchResponse {
   error?: string;
 }
 
+export interface Playlist {
+  id: string;
+  name: string;
+}
+
 export interface SavePlaylistInput {
   title: string;
+  /** Set when adding to an existing playlist chosen from the list. */
+  playlistId?: string;
   list: string;
   userToken: string;
   developerToken: string;
@@ -165,6 +172,25 @@ export async function savePlaylist(input: SavePlaylistInput): Promise<SavePlayli
     };
   } catch (error) {
     rethrow(error, '플레이리스트를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
+/**
+ * Playlists the user can add to.
+ *
+ * Picking from this replaces matching a typed title against the library, where
+ * a typo silently created a new playlist and duplicate names left the server
+ * guessing which one was meant. Read-only playlists are filtered out server
+ * side, so everything here can actually be written to.
+ */
+export async function fetchPlaylists(userToken: string): Promise<Playlist[]> {
+  try {
+    const { data } = await client.post<{ playlists?: Playlist[] }>('/api/playlists', {
+      userToken,
+    });
+    return data.playlists ?? [];
+  } catch (error) {
+    rethrow(error, '플레이리스트 목록을 불러오지 못했습니다.');
   }
 }
 

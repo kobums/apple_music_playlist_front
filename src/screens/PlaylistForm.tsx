@@ -1,7 +1,13 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { FiInfo } from 'react-icons/fi';
 import { useAuth } from '../auth/AuthContext';
-import { savePlaylist, SessionExpiredError, type SavePlaylistResult } from '../lib/api';
+import {
+  fetchPlaylists,
+  savePlaylist,
+  SessionExpiredError,
+  type Playlist,
+  type SavePlaylistResult,
+} from '../lib/api';
 import { unauthorizeMusicKit } from '../lib/musickit';
 import Celebration from '../components/Celebration';
 import ResultPage from './ResultPage';
@@ -11,6 +17,9 @@ import Tooltip from '../components/Tooltip';
 import '../styles/PlaylistForm.css';
 
 const CELEBRATION_MS = 2400;
+
+/** Sentinel for the "make a new one" option in the target dropdown. */
+const NEW_PLAYLIST = '';
 
 interface FieldErrors {
   title?: string;
@@ -22,6 +31,10 @@ export default function PlaylistForm() {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [playlistId, setPlaylistId] = useState<string>(NEW_PLAYLIST);
+  const [isLoadingPlaylists, setIsLoadingPlaylists] = useState(true);
+  const [playlistsError, setPlaylistsError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -31,11 +44,48 @@ export default function PlaylistForm() {
   const titleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
+  const targetId = useId();
   const titleId = useId();
   const titleErrorId = useId();
   const contentId = useId();
   const contentErrorId = useId();
   const contentHelperId = useId();
+
+  // Loaded once so the user picks a target instead of typing a name that has to
+  // be matched. A failure here is not fatal: creating a new playlist by name
+  // still works, so the form stays usable.
+  useEffect(() => {
+    if (!musicUserToken) {
+      setIsLoadingPlaylists(false);
+      return;
+    }
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const found = await fetchPlaylists(musicUserToken);
+        if (!cancelled) {
+          setPlaylists(found);
+        }
+      } catch (cause) {
+        if (!cancelled) {
+          setPlaylistsError(
+            cause instanceof Error
+              ? `${cause.message} 새 플레이리스트 만들기는 그대로 쓸 수 있습니다.`
+              : '플레이리스트 목록을 불러오지 못했습니다.',
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingPlaylists(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [musicUserToken]);
 
   // The old code nested two `setTimeout`s inside `finally` and never cleared
   // them, so unmounting mid-celebration left timers running against dead state.
@@ -47,11 +97,16 @@ export default function PlaylistForm() {
     return () => window.clearTimeout(timer);
   }, [showCelebration]);
 
+  // Display name for the chosen playlist. The server uses the id to target it
+  // and only echoes this back for the results screen.
+  const selectedPlaylistName =
+    playlists.find((playlist) => playlist.id === playlistId)?.name ?? '';
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
     const nextErrors: FieldErrors = {};
-    if (!title.trim()) {
+    if (playlistId === NEW_PLAYLIST && !title.trim()) {
       nextErrors.title = '플레이리스트 제목을 입력해 주세요.';
     }
     if (!content.trim()) {
@@ -73,7 +128,8 @@ export default function PlaylistForm() {
 
     try {
       const result = await savePlaylist({
-        title: title.trim(),
+        title: playlistId === NEW_PLAYLIST ? title.trim() : selectedPlaylistName,
+        playlistId: playlistId === NEW_PLAYLIST ? undefined : playlistId,
         list: content,
         userToken: musicUserToken ?? '',
         developerToken: developerToken ?? '',
@@ -109,6 +165,7 @@ export default function PlaylistForm() {
   const handleReset = () => {
     setTitle('');
     setContent('');
+    setPlaylistId(NEW_PLAYLIST);
     setSaved(null);
     setFieldErrors({});
     setSubmitError(null);
@@ -162,32 +219,59 @@ export default function PlaylistForm() {
                 button nested in a <label> steals the click and focuses the
                 input instead of opening the tooltip. */}
             <div className="field__label-row">
-              <label className="field__label" htmlFor={titleId}>
-                플레이리스트 제목
+              <label className="field__label" htmlFor={targetId}>
+                어디에 추가할까요
               </label>
               <Tooltip
-                label="플레이리스트 제목 도움말"
-                message="이미 있는 제목을 적으면 그 플레이리스트에 곡이 추가됩니다."
+                label="플레이리스트 선택 도움말"
+                message="기존 플레이리스트를 고르면 그 뒤에 곡이 추가됩니다."
               >
                 <FiInfo size={16} aria-hidden="true" />
               </Tooltip>
             </div>
-            <input
-              id={titleId}
-              ref={titleRef}
+            <select
+              id={targetId}
               className="field__input"
-              type="text"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              aria-invalid={fieldErrors.title ? 'true' : undefined}
-              aria-describedby={fieldErrors.title ? titleErrorId : undefined}
-            />
-            {fieldErrors.title ? (
-              <p className="field__error" id={titleErrorId}>
-                {fieldErrors.title}
-              </p>
+              value={playlistId}
+              disabled={isLoadingPlaylists}
+              onChange={(event) => setPlaylistId(event.target.value)}
+            >
+              <option value={NEW_PLAYLIST}>+ 새 플레이리스트 만들기</option>
+              {playlists.map((playlist) => (
+                <option key={playlist.id} value={playlist.id}>
+                  {playlist.name}
+                </option>
+              ))}
+            </select>
+            {isLoadingPlaylists ? (
+              <p className="field__helper">플레이리스트 목록을 불러오는 중입니다.</p>
             ) : null}
+            {playlistsError ? <p className="field__error">{playlistsError}</p> : null}
           </div>
+
+          {/* Only a new playlist needs a name; an existing one already has one. */}
+          {playlistId === NEW_PLAYLIST ? (
+            <div className="field">
+              <label className="field__label" htmlFor={titleId}>
+                새 플레이리스트 제목
+              </label>
+              <input
+                id={titleId}
+                ref={titleRef}
+                className="field__input"
+                type="text"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                aria-invalid={fieldErrors.title ? 'true' : undefined}
+                aria-describedby={fieldErrors.title ? titleErrorId : undefined}
+              />
+              {fieldErrors.title ? (
+                <p className="field__error" id={titleErrorId}>
+                  {fieldErrors.title}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="field">
             <div className="field__label-row">
