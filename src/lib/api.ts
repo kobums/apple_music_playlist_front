@@ -15,9 +15,34 @@ const client = axios.create({
   timeout: 180_000,
 });
 
+export interface Track {
+  id: string;
+  name: string;
+  artistName: string;
+  albumName: string;
+  artworkUrl?: string;
+  previewUrl?: string;
+  url?: string;
+}
+
+/**
+ * `added` went in, `review` was found but needs a person to confirm, `missing`
+ * had no usable candidate. The API used to return a bare boolean, which forced
+ * an unverified guess to be reported as a success.
+ */
+export type MatchStatus = 'added' | 'review' | 'missing';
+
 export interface TrackResult {
   song: string;
-  status: boolean;
+  status: MatchStatus;
+  score?: number;
+  track?: Track;
+  candidates?: Track[];
+}
+
+export interface SavePlaylistResult {
+  playlistId: string;
+  results: TrackResult[];
 }
 
 interface TokenResponse {
@@ -28,7 +53,14 @@ interface TokenResponse {
 
 interface PlaylistResponse {
   code: string;
+  playlistId?: string;
   result?: TrackResult[];
+  error?: string;
+}
+
+interface SearchResponse {
+  code: string;
+  candidates?: Track[];
   error?: string;
 }
 
@@ -89,19 +121,47 @@ export async function fetchDeveloperToken(): Promise<string> {
   }
 }
 
-export async function savePlaylist(input: SavePlaylistInput): Promise<TrackResult[]> {
+/** Wraps a failure, turning an expired session into its own error type. */
+function rethrow(error: unknown, fallback: string): never {
+  if (isSessionExpired(error)) {
+    throw new SessionExpiredError(
+      toUserMessage(error, 'Apple Music 인증이 만료되었습니다. 다시 로그인해 주세요.'),
+    );
+  }
+  throw new Error(toUserMessage(error, fallback));
+}
+
+export async function savePlaylist(input: SavePlaylistInput): Promise<SavePlaylistResult> {
   try {
     const { data } = await client.post<PlaylistResponse>('/api/playlist', input);
-    if (!data.result) {
+    if (!data.result || !data.playlistId) {
       throw new Error(data.error ?? '플레이리스트를 저장하지 못했습니다.');
     }
-    return data.result;
+    return { playlistId: data.playlistId, results: data.result };
   } catch (error) {
-    if (isSessionExpired(error)) {
-      throw new SessionExpiredError(
-        toUserMessage(error, 'Apple Music 인증이 만료되었습니다. 다시 로그인해 주세요.'),
-      );
-    }
-    throw new Error(toUserMessage(error, '플레이리스트를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.'));
+    rethrow(error, '플레이리스트를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
+/** Looks up alternatives when a suggested match is wrong or nothing was found. */
+export async function searchTracks(userToken: string, query: string): Promise<Track[]> {
+  try {
+    const { data } = await client.post<SearchResponse>('/api/search', { userToken, query });
+    return data.candidates ?? [];
+  } catch (error) {
+    rethrow(error, '검색하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
+/** Adds the tracks the user confirmed to the playlist that was just created. */
+export async function addTracks(
+  userToken: string,
+  playlistId: string,
+  songIds: string[],
+): Promise<void> {
+  try {
+    await client.post('/api/playlist/tracks', { userToken, playlistId, songIds });
+  } catch (error) {
+    rethrow(error, '곡을 추가하지 못했습니다. 잠시 후 다시 시도해 주세요.');
   }
 }
