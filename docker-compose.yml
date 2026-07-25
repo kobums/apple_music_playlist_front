@@ -1,6 +1,8 @@
-version: '3.8'
 services:
   react-app:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile
     ports:
       - "9002:9002"
+    restart: unless-stopped

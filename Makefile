@@ -3,13 +3,17 @@ tag=latest
 all: run
 
 run:
-	yarn start
+	npm run dev
 
 build:
-	yarn build
+	npm run build
 
-docker: build
-	docker build -t kobums/apple_music_playlist_front:$(tag) .
+typecheck:
+	npm run typecheck
+
+# 이미지 빌드는 멀티스테이지 Dockerfile 안에서 처리하므로 호스트 빌드에 의존하지 않는다.
+docker:
+	docker build -f dockerfile -t kobums/apple_music_playlist_front:$(tag) .
 
 push: docker
 	docker push kobums/apple_music_playlist_front:$(tag)
