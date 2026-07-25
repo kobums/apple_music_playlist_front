@@ -130,6 +130,9 @@ export default function PlaylistForm() {
       <>
         <ResultPage
           playlistId={saved.playlistId}
+          playlistName={saved.playlistName}
+          existingCount={saved.existingCount}
+          created={saved.created}
           results={saved.results}
           userToken={musicUserToken ?? ''}
           onReset={handleReset}

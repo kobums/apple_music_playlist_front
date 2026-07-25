@@ -43,6 +43,12 @@ export interface TrackResult {
 
 export interface SavePlaylistResult {
   playlistId: string;
+  /** Name the tracks actually went into, so the user can find it. */
+  playlistName: string;
+  /** How many tracks the playlist already held before this run. */
+  existingCount: number;
+  /** True when the playlist did not exist and was created. */
+  created: boolean;
   results: TrackResult[];
 }
 
@@ -55,6 +61,9 @@ interface TokenResponse {
 interface PlaylistResponse {
   code: string;
   playlistId?: string;
+  playlistName?: string;
+  playlistExistingCount?: number;
+  playlistCreated?: boolean;
   result?: TrackResult[];
   error?: string;
 }
@@ -138,7 +147,13 @@ export async function savePlaylist(input: SavePlaylistInput): Promise<SavePlayli
     if (!data.result || !data.playlistId) {
       throw new Error(data.error ?? '플레이리스트를 저장하지 못했습니다.');
     }
-    return { playlistId: data.playlistId, results: data.result };
+    return {
+      playlistId: data.playlistId,
+      playlistName: data.playlistName ?? input.title,
+      existingCount: data.playlistExistingCount ?? 0,
+      created: data.playlistCreated ?? false,
+      results: data.result,
+    };
   } catch (error) {
     rethrow(error, '플레이리스트를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
   }

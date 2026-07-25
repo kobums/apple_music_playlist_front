@@ -11,6 +11,9 @@ const SKIP = '';
 
 interface ResultPageProps {
   playlistId: string;
+  playlistName: string;
+  existingCount: number;
+  created: boolean;
   results: TrackResult[];
   userToken: string;
   onReset: () => void;
@@ -36,6 +39,9 @@ const SETTLED: MatchStatus[] = ['added', 'duplicate'];
 
 export default function ResultPage({
   playlistId,
+  playlistName,
+  existingCount,
+  created,
   results,
   userToken,
   onReset,
@@ -190,6 +196,15 @@ export default function ResultPage({
     <main className="result">
       <div className="result__header">
         <h1 className="result__heading">플레이리스트 결과</h1>
+        {/*
+          Which playlist was written to, and what it already held. Without this,
+          "이미 있음" on a playlist the user believes is empty reads as a bug —
+          it usually means they are looking at a different playlist.
+        */}
+        <p className="result__target">
+          <strong>{playlistName}</strong>
+          {created ? '을(를) 새로 만들었습니다.' : `에 추가했습니다 · 기존 ${existingCount}곡`}
+        </p>
         <p className="result__summary">
           {rows.length}곡 중 {counts.added}곡을 추가했습니다.
           {counts.duplicate > 0 ? ` ${counts.duplicate}곡은 이미 들어 있어 건너뛰었습니다.` : ''}

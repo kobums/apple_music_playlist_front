@@ -27,10 +27,21 @@
   font-weight: var(--font-weight-bold);
 }
 
-.result__summary {
+.result__target {
   color: var(--color-text);
   font-size: var(--font-size-body);
   line-height: var(--line-height-body);
+  overflow-wrap: anywhere;
+}
+
+.result__target strong {
+  font-weight: var(--font-weight-bold);
+}
+
+.result__summary {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
 }
 
 .result__list {
