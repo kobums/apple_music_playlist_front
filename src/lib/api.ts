@@ -26,11 +26,12 @@ export interface Track {
 }
 
 /**
- * `added` went in, `review` was found but needs a person to confirm, `missing`
- * had no usable candidate. The API used to return a bare boolean, which forced
- * an unverified guess to be reported as a success.
+ * `added` went in, `duplicate` was already in the playlist, `review` was found
+ * but needs a person to confirm, `missing` had no usable candidate. The API used
+ * to return a bare boolean, which forced an unverified guess to be reported as a
+ * success and had no way to say "already there".
  */
-export type MatchStatus = 'added' | 'review' | 'missing';
+export type MatchStatus = 'added' | 'duplicate' | 'review' | 'missing';
 
 export interface TrackResult {
   song: string;
@@ -153,14 +154,27 @@ export async function searchTracks(userToken: string, query: string): Promise<Tr
   }
 }
 
-/** Adds the tracks the user confirmed to the playlist that was just created. */
+export interface AddTracksResult {
+  added: string[];
+  duplicate: string[];
+}
+
+/**
+ * Adds the tracks the user confirmed. The server skips anything the playlist
+ * already holds and reports it separately, so rows can be labelled truthfully
+ * instead of every pick claiming to be new.
+ */
 export async function addTracks(
   userToken: string,
   playlistId: string,
   songIds: string[],
-): Promise<void> {
+): Promise<AddTracksResult> {
   try {
-    await client.post('/api/playlist/tracks', { userToken, playlistId, songIds });
+    const { data } = await client.post<{ added?: string[]; duplicate?: string[] }>(
+      '/api/playlist/tracks',
+      { userToken, playlistId, songIds },
+    );
+    return { added: data.added ?? [], duplicate: data.duplicate ?? [] };
   } catch (error) {
     rethrow(error, '곡을 추가하지 못했습니다. 잠시 후 다시 시도해 주세요.');
   }

@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import { FiSearch } from 'react-icons/fi';
-import { addTracks, searchTracks, type TrackResult } from '../lib/api';
+import { addTracks, searchTracks, type MatchStatus, type TrackResult } from '../lib/api';
 import Lozenge from '../components/Lozenge';
 import SectionMessage from '../components/SectionMessage';
 import Spinner from '../components/Spinner';
@@ -19,15 +19,20 @@ interface ResultPageProps {
 
 const STATUS_LABEL = {
   added: '추가됨',
+  duplicate: '이미 있음',
   review: '확인 필요',
   missing: '못 찾음',
 } as const;
 
 const STATUS_APPEARANCE = {
   added: 'success',
+  duplicate: 'default',
   review: 'default',
   missing: 'danger',
 } as const;
+
+/** Rows in these states are settled — nothing for the user to decide. */
+const SETTLED: MatchStatus[] = ['added', 'duplicate'];
 
 export default function ResultPage({
   playlistId,
@@ -81,6 +86,7 @@ export default function ResultPage({
   const counts = useMemo(
     () => ({
       added: rows.filter((row) => row.status === 'added').length,
+      duplicate: rows.filter((row) => row.status === 'duplicate').length,
       review: rows.filter((row) => row.status === 'review').length,
       missing: rows.filter((row) => row.status === 'missing').length,
     }),
@@ -90,7 +96,9 @@ export default function ResultPage({
   const pending = useMemo(
     () =>
       rows.flatMap((row, index) =>
-        row.status !== 'added' && selected[index] ? [{ index, trackId: selected[index] }] : [],
+        !SETTLED.includes(row.status) && selected[index]
+          ? [{ index, trackId: selected[index] }]
+          : [],
       ),
     [rows, selected],
   );
@@ -129,21 +137,36 @@ export default function ResultPage({
     setIsAdding(true);
     setError(null);
     try {
-      await addTracks(
+      const outcome = await addTracks(
         userToken,
         playlistId,
         pending.map((item) => item.trackId),
       );
 
-      const added = new Map(pending.map((item) => [item.index, item.trackId]));
+      // The server skips anything already in the playlist, so a confirmed pick
+      // can come back as "already there" rather than newly added.
+      const chosenByRow = new Map(pending.map((item) => [item.index, item.trackId]));
+      const wasAdded = new Set(outcome.added);
+      const wasDuplicate = new Set(outcome.duplicate);
+
       setRows((current) =>
         current.map((row, index) => {
-          const trackId = added.get(index);
+          const trackId = chosenByRow.get(index);
           if (!trackId) {
             return row;
           }
+
+          const status: MatchStatus = wasDuplicate.has(trackId)
+            ? 'duplicate'
+            : wasAdded.has(trackId)
+              ? 'added'
+              : row.status;
+          if (!SETTLED.includes(status)) {
+            return row;
+          }
+
           const chosen = candidatesFor(row).find((track) => track.id === trackId) ?? row.track;
-          return { ...row, status: 'added', track: chosen, candidates: undefined };
+          return { ...row, status, track: chosen, candidates: undefined };
         }),
       );
       setSelected({});
@@ -169,6 +192,7 @@ export default function ResultPage({
         <h1 className="result__heading">플레이리스트 결과</h1>
         <p className="result__summary">
           {rows.length}곡 중 {counts.added}곡을 추가했습니다.
+          {counts.duplicate > 0 ? ` ${counts.duplicate}곡은 이미 들어 있어 건너뛰었습니다.` : ''}
           {counts.review > 0 ? ` ${counts.review}곡은 확인이 필요합니다.` : ''}
           {counts.missing > 0 ? ` ${counts.missing}곡은 찾지 못했습니다.` : ''}
         </p>
@@ -196,7 +220,7 @@ export default function ResultPage({
         <ul className="result__list">
           {rows.map((row, index) => {
             const candidates = candidatesFor(row);
-            const needsAttention = row.status !== 'added';
+            const needsAttention = !SETTLED.includes(row.status);
 
             return (
               <li key={`${index}-${row.song}`} className="result__item">
@@ -207,7 +231,7 @@ export default function ResultPage({
                   </Lozenge>
                 </div>
 
-                {row.status === 'added' && row.track ? (
+                {SETTLED.includes(row.status) && row.track ? (
                   <p className="result__matched">
                     {row.track.artistName} - {row.track.name}
                   </p>
