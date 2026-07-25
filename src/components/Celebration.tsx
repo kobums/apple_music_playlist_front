@@ -1,24 +1,32 @@
-import React from 'react';
-import '../assets/css/Celebration.css'; // 별도 CSS 파일을 연결
+import { FiCheckCircle } from 'react-icons/fi';
+import '../styles/Celebration.css';
 
+/**
+ * Completion moment shown once a playlist has actually been saved.
+ *
+ * design.md → Motion allows richer motion for low-frequency milestone moments,
+ * but Icons bans emoji as glyphs, so the 🎉 is replaced by the success icon in a
+ * neutral tile. The overlay is inert and announced politely rather than
+ * trapping focus.
+ */
 interface CelebrationProps {
   message: string;
-  show: boolean; // 이모티콘 표시 여부
+  show: boolean;
 }
 
-const Celebration: React.FC<CelebrationProps> = ({ message, show }) => {
-  if (!show) return null; // If 'show' is false, don't render anything
+export default function Celebration({ message, show }: CelebrationProps) {
+  if (!show) {
+    return null;
+  }
 
   return (
-    <div className="celebration-overlay"> {/* White overlay that covers the entire screen */}
-      <div className="celebration-message">
-        🎉
-        <br />
-        {message}
+    <div className="celebration" role="status" aria-live="polite">
+      <div className="celebration__content">
+        <span className="celebration__tile">
+          <FiCheckCircle size={32} aria-hidden="true" />
+        </span>
+        <p className="celebration__message">{message}</p>
       </div>
     </div>
   );
-};
-
-
-export default Celebration;
+}

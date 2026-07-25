@@ -1,9 +1,7 @@
-declare namespace MusicKit {
-    interface MusicKitInstance {
-      authorize(): Promise<string>;
-      // 여기에 MusicKitInstance에서 필요한 다른 메서드 및 속성을 추가하세요
-    }
-  
+export {};
+
+declare global {
+  namespace MusicKit {
     interface ConfigureParams {
       developerToken: string;
       app: {
@@ -11,6 +9,24 @@ declare namespace MusicKit {
         build: string;
       };
     }
-  
-    function configure(params: ConfigureParams): MusicKitInstance;
+
+    interface MusicKitInstance {
+      /** Resolves with the Music User Token. */
+      authorize(): Promise<string>;
+      unauthorize(): Promise<void>;
+      readonly isAuthorized: boolean;
+      readonly musicUserToken?: string;
+      readonly storefrontId?: string;
+    }
   }
+
+  interface MusicKitStatic {
+    /** MusicKit v3 resolves with the instance; v1 returned it synchronously. */
+    configure(params: MusicKit.ConfigureParams): Promise<MusicKit.MusicKitInstance>;
+    getInstance(): MusicKit.MusicKitInstance | undefined;
+  }
+
+  interface Window {
+    MusicKit?: MusicKitStatic;
+  }
+}
