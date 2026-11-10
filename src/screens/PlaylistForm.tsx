@@ -10,6 +10,7 @@ import {
 } from '../lib/api';
 import { unauthorizeMusicKit } from '../lib/musickit';
 import Celebration from '../components/Celebration';
+import LegalLinks from '../components/LegalLinks';
 import ResultPage from './ResultPage';
 import SectionMessage from '../components/SectionMessage';
 import Spinner from '../components/Spinner';
@@ -311,6 +312,8 @@ export default function PlaylistForm() {
             플레이리스트 저장
           </button>
         </form>
+
+        <LegalLinks />
       </div>
     </main>
   );

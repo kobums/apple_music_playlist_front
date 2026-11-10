@@ -1,0 +1,24 @@
+/* Terms / privacy links — components.link-subtle in design.md. */
+
+.legal-links {
+  display: flex;
+  justify-content: center;
+  column-gap: var(--space-100);
+  font-size: var(--font-size-body-small);
+  line-height: var(--line-height-body-small);
+  color: var(--color-text-subtle);
+}
+
+.legal-links__link {
+  color: var(--color-text-subtle);
+  text-decoration: none;
+}
+
+.legal-links__link:hover {
+  text-decoration: underline;
+}
+
+.legal-links__link:active {
+  color: var(--color-text);
+  text-decoration: underline;
+}

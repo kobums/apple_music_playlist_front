@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import { fetchDeveloperToken } from '../lib/api';
 import { configureMusicKit } from '../lib/musickit';
 import SectionMessage from '../components/SectionMessage';
+import LegalLinks from '../components/LegalLinks';
 import Spinner from '../components/Spinner';
 import '../styles/MusicKitAuth.css';
 
@@ -155,6 +156,8 @@ export default function MusicKitAuth() {
             </button>
           )}
         </div>
+
+        <LegalLinks />
       </div>
     </main>
   );
